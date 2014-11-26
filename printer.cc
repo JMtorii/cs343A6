@@ -13,7 +13,7 @@ Printer::Printer( unsigned int numStudents, unsigned int numVendingMachines, uns
     
     cout << endl;
     
-    for( unsigned int i = 0; i < totalSize; i++ ) printData[ i ].filled = false;
+    for( unsigned int i = 0; i < totalSize; i++ ) printData[ i ].isFilled = false;
 }
 
 Printer::~Printer() {
@@ -100,7 +100,7 @@ _Mutex void Printer::print( unsigned int id, char state, int value1, int value2 
         }
 
         cout << endl;
-    } else if( printState[ id ].isFilled ) {
+    } else if( printData[ id ].isFilled ) {
         clear();
     }
 

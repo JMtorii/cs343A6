@@ -9,6 +9,7 @@ _Monitor MPRNG {
     unsigned int operator()( unsigned int l, unsigned int u ) { return operator()( u - l ) + l; } // [l,u]
 }; // MPRNG
 
+#if 0
 SodaCost                2    # Manufacturer Suggested Retail Price (MSRP) per bottle
 NumStudents             2    # number of students to create
 MaxPurchases            8    # maximum number of bottles a student purchases
@@ -19,6 +20,7 @@ MaxShippedPerFlavour    3    # maximum number of bottles of each flavour generat
 TimeBetweenShipments    3    # length of time between shipment pickup
 ParentalDelay           2    # length of time between new deposits of funds
 NumCouriers             1    # maximum number of couriers in the pool
+#endif
 
 struct ConfigParms {
     unsigned int sodaCost;                 // MSRP per bottle
