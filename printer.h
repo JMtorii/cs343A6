@@ -27,4 +27,5 @@ _Monitor Printer {
     void clear();
     _Mutex void print( unsigned int id, char state, int value1, int value2 );
 };
+
 #endif
