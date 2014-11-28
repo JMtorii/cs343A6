@@ -1,3 +1,4 @@
 # Ignore make and build files
 *.d
 *.o
+*.swp
