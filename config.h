@@ -2,6 +2,7 @@
 #define __CONFIG_H__
 
 #define NUM_FLAVOURS 4
+#define INITIAL_CARD_AMOUNT 5
 
 struct ConfigParms {
     unsigned int sodaCost;                  // MSRP per bottle
