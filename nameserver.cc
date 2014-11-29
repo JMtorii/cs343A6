@@ -1,12 +1,11 @@
-#include "printer.h"
-#include "vending.h"
 #include "nameserver.h"
 
-void NameServer::main() {
+NameServer::NameServer( Printer &prt, unsigned int numVendingMachines, unsigned int numStudents ) : 
+    prt( prt ), numVendingMachines( numVendingMachines ), numStudents( numStudents ) {
 
 }
 
-NameServer::NameServer( Printer &prt, unsigned int numVendingMachines, unsigned int numStudents ) {
+~NameServer::NameServer() {
 
 }
 
@@ -19,6 +18,10 @@ VendingMachine* VendingMachine::getMachine( unsigned int id ) {
 }
 
 VendingMachine** VendingMachine::getMachineList() {
+
+}
+
+void NameServer::main() {
 
 }
 
