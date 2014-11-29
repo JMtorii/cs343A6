@@ -1,3 +1,6 @@
+#ifndef __NAMESERVER_H__
+#define __NAMESERVER_H__
+
 _Monitor Printer;
 _Task VendingMachine;
 
@@ -10,3 +13,4 @@ _Task NameServer {
     VendingMachine **getMachineList();
 };
 
+#endif

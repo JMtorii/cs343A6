@@ -9,7 +9,7 @@ _Monitor Bank {
     void withdraw( unsigned int id, unsigned int amount );
   private:
     unsigned int numStudents;
-    int *accounts;
+    unsigned int *accounts;
     uCondition *conds;
 };
 

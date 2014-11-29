@@ -41,14 +41,14 @@ void uMain::main() {
     randomizer.seed( seed );
 
     ConfigParms params; 
-    processConfigFile( configFile, params );
+    processConfigFile( configFile.c_str(), params );
     
-    Printer printer( printer.numStudnets, params.numVendingMachines, params.numCouriers );
+    Printer printer( params.numStudents, params.numVendingMachines, params.numCouriers );
     Bank bank( params.numStudents );
     Parent *parent = new Parent( printer, bank, params.numStudents, params.parentalDelay );
     WATCardOffice *watCardOffice = new WATCardOffice( printer, bank, params.numCouriers );
     NameServer *nameServer = new NameServer( printer, params.numVendingMachines, params.numStudents );
-    BottlingPlant *bottlingPlant = new BottlingPlant( printer, *nameServer, params.numVendingMachines, params.maxShippingPerFlavour, params.maxStockPerFlavour, params.timeBetweenShipments );
+    BottlingPlant *bottlingPlant = new BottlingPlant( printer, *nameServer, params.numVendingMachines, params.maxShippedPerFlavour, params.maxStockPerFlavour, params.timeBetweenShipments );
     
     VendingMachine *vendingMachines[ params.numVendingMachines ];
     for ( unsigned int i = 0; i < params.numVendingMachines; i++ )
