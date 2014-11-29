@@ -4,11 +4,11 @@
 #include "printer.h"
 #include "bank.h"
 #include "parent.h"
-#include "watoffice.h"
+#include "office.h"
 #include "nameserver.h"
 #include "vending.h"
 #include "bottle.h"
-#include "stduent.h"
+#include "student.h"
 
 using namespace std;
 
@@ -56,7 +56,7 @@ void uMain::main() {
 
     Student *students[ params.numStudents ];
     for ( unsigned int i = 0; i < params.numStudents; i++ )
-        students[ i ] = new Student( printer, *nameServer, *watCardOffice, student, params.maxPurchases );
+        students[ i ] = new Student( printer, *nameServer, *watCardOffice, i, params.maxPurchases );
 
     for ( unsigned int i = 0; i < params.numStudents; i++ ) 
         delete students[ i ];

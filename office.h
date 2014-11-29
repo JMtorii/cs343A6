@@ -1,12 +1,10 @@
-#ifndef __WATCARD_H__
-#define __WATCARD_H__
+#ifndef __OFFICE_H__
+#define __OFFICE_H__
 
 #include "watcard.h"
 #include "bank.h"
 #include "printer.h"
-#include "office.h"
 #include "MPRNG.h"
-
 
 _Task WATCardOffice {
   public:
