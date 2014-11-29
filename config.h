@@ -3,6 +3,7 @@
 
 #define NUM_FLAVOURS 4
 #define INITIAL_CARD_AMOUNT 5
+#define CHANCE_TO_LOSE_CARD 6 
 
 struct ConfigParms {
     unsigned int sodaCost;                  // MSRP per bottle
