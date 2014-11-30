@@ -13,7 +13,7 @@ _Task NameServer {
     VendingMachine **getMachineList();
   private:
     Printer &prt;
-    unsigned int numVendingMachines, numStudents
+    unsigned int numVendingMachines, numStudents;
     void main();
 };
 
