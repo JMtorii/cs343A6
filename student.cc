@@ -20,8 +20,7 @@ void Student::main() {
         
         while ( !isBought ) {
             try {
-
-                // TODO: Need to catch the states where the vending machine returns a Funds exception
+                // TODO: Need to catch the exceptions where the vending machine returns a Funds exception
                 VendingMachine::Status status = machine->buy( ( VendingMachine::Flavours ) favFlavourId, *( watcard() ) );
                 switch( status ) {
                     // MAY NEED TO CHANGE THESE STATES

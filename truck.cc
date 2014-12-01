@@ -2,11 +2,12 @@
 #include "printer.h"
 #include "nameserver.h"
 #include "bottle.h"
+#include "MPRNG.h"
 
 /*
  * Helper function for determining if the truck is empty
  */
-bool Truck::truckEmpty( ) {
+bool Truck::truckEmpty() {
     for ( int i = 0; i < VendingMachine::FLAVOUR_COUNT; ++i ) {
         if ( cargo[i] != 0 ) {
             return false;
@@ -16,7 +17,21 @@ bool Truck::truckEmpty( ) {
     return true;
 }
 
+/*
+ * Helper function for tallying truck cargo
+ */
+unsigned int Truck::tallyCargo() {
+    int total = 0;
+    for ( int i = 0; i < VendingMachine::FLAVOUR_COUNT; ++i ) {
+        total += cargo[i];
+    }
+
+    return total;
+}
+
 void Truck::main() {
+    prt.print( Printer::Truck, ( char ) STARTING );
+
     unsigned int currentMachine = 0;
 
     for ( ;; ) {
@@ -29,12 +44,17 @@ void Truck::main() {
         } catch ( BottlingPlant::Shutdown &e ) {
             break; // Shut down if the bottling plant is shutting down
         }
+        prt.print( Printer::Truck, ( char ) PICKUP, tallyCargo() );
 
         // Distribute shipment across machines, rotate first machine for fairness
         for ( int i = 0; i < numVendingMachines && !truckEmpty(); ++i ) {
 
             // Unload as much shipment as possible
             unsigned int *machineContents = vendingMachines[currentMachine].inventory();
+
+            prt.print( Printer::Truck, ( char ) DELIVERYSTART, currentMachine, tallyCargo() );
+
+            int unstocked = 0; // holds the number of bottles we were not able to restock
             for ( int j = 0; j < VendingMachine::FLAVOUR_COUNT; ++j ) {
                 unsigned int sodaToTransfer;
                 sodaToTransfer = maxStockPerFlavour - (*machineContents)[ j ];
@@ -47,8 +67,21 @@ void Truck::main() {
 
                 // Add it to the machine
                 (*machineContents)[ j ] += sodaToTransfer;
+
+                // Check how many we were not able to restock
+                if ( (*machineContents)[j] < maxStockPerFlavour ) {
+                    unstocked += maxStockPerFlavour - (*machineContents)[ j ];
+                }
             }
+
             VendingMachines[currentMachine].restocked(); // signal that we are done restocking
+
+            // Print out "incomplete" message if applicable
+            if ( unstocked > 0 ) {
+                prt.print( Printer::Truck, ( char ) UNSUCCESS, currentMachine, unstocked );
+            }
+
+            prt.print( Printer::Truck, ( char ) DELIVERYSTOP, currentMachine, tallyCargo() );
 
 
             // Rotate starting machine to keep things fair, keeping track of last served between trips
@@ -56,6 +89,8 @@ void Truck::main() {
             currentMachine = currentMachine % numVendingMachines;
         }
     }
+
+    prt.print( Printer::Truck, ( char ) FINISHED );
 }
 
 Truck::Truck( Printer &prt, NameServer &nameServer, BottlingPlant &plant,
