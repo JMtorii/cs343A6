@@ -1,4 +1,5 @@
 #include "student.h"
+#include "MPRNG.h"
 
 Student::Student( Printer &prt, NameServer &nameServer, WATCardOffice &cardOffice, unsigned int id, unsigned int maxPurchases ) : 
     prt( prt ), nameServer( nameServer ), cardOffice( cardOffice ), id ( id ) {
@@ -11,7 +12,7 @@ void Student::main() {
     FWATCard watcard = cardOffice.create( id, INITIAL_CARD_AMOUNT );
 
     for ( unsigned int i = 0; i < numPurchases; i++ ) {
-        yield( 10 ); // this may need to be changed
+        yield( randomizer( 1, 10 ) ); 
         
         VendingMachine *vendingMachine = nameServer.getMachine( id );
         prt.print( Printer::Student, id, ( char ) SELECTING_MACHINE, machine->getId() );
