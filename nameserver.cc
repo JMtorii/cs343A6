@@ -2,8 +2,10 @@
 #include "vending.h"
 #include "printer.h"
 
+#include <iostream>
+
 NameServer::NameServer( Printer &prt, unsigned int numVendingMachines, unsigned int numStudents ) : 
-    prt( prt ), numVendingMachines( numVendingMachines ), numStudents( numStudents ) {
+    prt( prt ), numVendingMachines( numVendingMachines ), numStudents( numStudents ), numRegVendingMachines(0) {
     machineAssigner = new int[ numStudents ];
     vendingMachines = new VendingMachine*[ numVendingMachines ];
     for ( unsigned int i = 0; i < numStudents; i++ ) machineAssigner[ i ] = i % numVendingMachines;
