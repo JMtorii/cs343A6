@@ -18,6 +18,8 @@ Printer::Printer( unsigned int numStudents, unsigned int numVendingMachines, uns
 }
 
 Printer::~Printer() {
+    clear();
+    delete [] printData;
     cout << "***********************" << endl;
 }
 
