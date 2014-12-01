@@ -4,8 +4,8 @@ WATCardOffice::WATCardOffice( Printer &prt, Bank &bank, unsigned int numCouriers
     prt( prt ), bank( bank), numCouriers( numCouriers ) {
     job = NULL;
     isFinished = false;
-    couriers = new Couriers*[ numCouriers ];
-    for ( unsigned int i = 0; i < numCouriers; i++ ) couriers[ i ] = new Couriers( i, this, prt );
+    couriers = new Courier*[ numCouriers ];
+    for ( unsigned int i = 0; i < numCouriers; i++ ) couriers[ i ] = new Courier( i, this, prt );
 }
 
 WATCardOffice::~WATCardOffice() {
@@ -22,26 +22,26 @@ void WATCardOffice::main() {
             isFinished = true;
             for ( unsigned int i = 0; i < numCouriers; i++ ) _Accept( requestWork ); 
             break;
-        } or _When( job != NULL ) _Accept( requestWord );
-          or _When( job == NULL ) _Accept( create, trasfer );   
+        } or _When( job != NULL ) _Accept( requestWork );
+          or _When( job == NULL ) _Accept( create, transfer );   
     }
 
     prt.print( Printer::WATCardOffice, ( char ) FINISHED );
 }
 
 WATCard::FWATCard WATCardOffice::create( unsigned int sid, unsigned int amount ) {
-    job = new Job( Args( bank, sid, NULL, amount ));
+    job = new Job( Args( sid, amount, NULL, bank ));
     prt.print( Printer::WATCardOffice, ( char ) CREATE_CALL_COMPLETE, sid, amount );
     return job->result;
 }
 
 WATCard::FWATCard WATCardOffice::transfer( unsigned int sid, unsigned int amount, WATCard *card ) {
-    job = new Job( Args( bank, sid, card, amount ));
+    job = new Job( Args( sid, amount, card, bank ));
     prt.print( Printer::WATCardOffice, ( char ) TRANSFER_CALL_COMPLETE, sid, amount );
     return job->result;
 }
 
-Job *WATCardOffice::requestWork() {
+WATCardOffice::Job *WATCardOffice::requestWork() {
     if ( isFinished ) return NULL;
     
     Job* tmp = job;
@@ -49,21 +49,10 @@ Job *WATCardOffice::requestWork() {
     return tmp;
 }
 
-WATCardOffice::Args( unsigned int id, unsigned int amount, WATCard *watcard, Bank &bank ) :
-    Args::id( id ), Args::bank( bank ), Args::watcard( watcard ), Args::amount( amount ) {}
-
-
-WATCardOffice::Job( Args args ) : Job::args( args ) {}
-
-
-
-WATCardOffice::Courier( unsigned int id, WATCardOffice *watcardOffice, Printer &prt ) : 
-    Courier::id( id ), Courier::watcardOffice( watcardOffice ), Courier::prt( prt ) {}
-
 void WATCardOffice::Courier::main() {
-    prt.main( Printer::Courier, id, ( char ) STARTING );
+    prt.print( Printer::Courier, id, ( char ) STARTING );
     
-    for ( ; ; ) {
+    for ( ;; ) {
         Job *tmpJob = office->requestWork();
         
         if ( tmpJob == NULL ) break;
@@ -76,9 +65,9 @@ void WATCardOffice::Courier::main() {
             prt.print( Printer::Courier, id, ( char ) START_FUND_TRANSFER, args.id, args.amount );
             args.bank.withdraw( args.id, args.amount );
             if ( args.watcard == NULL ) args.watcard = new WATCard();
-            args.card->deposit( args.amount );
-            prt.print( Printer::Courier, id, ( char ), COMPLETE_FUND_TRANSFER, args.id, args.amount );
-            job->result.delivery( args.watcard );
+            args.watcard->deposit( args.amount );
+            prt.print( Printer::Courier, id, ( char ) COMPLETE_FUND_TRANSFER, args.id, args.amount );
+            tmpJob->result.delivery( args.watcard );
         }
 
         delete tmpJob;

@@ -21,7 +21,10 @@ BottlingPlant::~BottlingPlant() {
 }
 
 void BottlingPlant::getShipment( unsigned int cargo[] ) {
-    if ( isDone ) _Throw( Shutdown() );
+    if ( isDone ) {
+        uRendezvousAcceptor();    
+        _Throw( Shutdown() );
+    }
 
     prt.print( Printer::BottlingPlant, ( char ) SHIPMENT_PICKED_UP );
     for ( int i = 0; i < NUM_FLAVOURS; i++ ) {

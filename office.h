@@ -5,6 +5,7 @@
 #include "bank.h"
 #include "printer.h"
 #include "MPRNG.h"
+#include "config.h"
 
 _Task WATCardOffice {
   private:
@@ -16,20 +17,22 @@ _Task WATCardOffice {
         WATCard *watcard;
         Bank &bank;
         
-        Args( unsigned int id, unsigned int amount, WATCard *watcard, Bank &bank );
+        Args( unsigned int id, unsigned int amount, WATCard *watcard, Bank &bank ) : 
+            id( id ), amount( amount ), watcard( watcard ), bank( bank ) {};
     };
     struct Job {                           // marshalled arguments and return future
         Args args;                         // call arguments (YOU DEFINE "Args")
         WATCard::FWATCard result;          // return future
         
-        Job( Args args );
+        Job( Args args ) : args( args ) {};
     };
 
     // Courrier communicates with bank
     _Task Courier {
       public:
         enum State { STARTING = 'S', START_FUND_TRANSFER = 't', COMPLETE_FUND_TRANSFER = 'T', FINISHED = 'F' };
-        Courier( unsigned int id, WATCardOffice *watcardOffice, Printer &prt );
+        Courier( unsigned int id, WATCardOffice *office, Printer &prt ) : 
+            id( id ), office( office ), prt( prt ) {};
       private:
         unsigned int id;
         WATCardOffice *office;
@@ -41,6 +44,7 @@ _Task WATCardOffice {
     Bank &bank;
     Courier **couriers;
     Job *job;
+    unsigned int numCouriers;
     bool isFinished;
     void main();
   public:
