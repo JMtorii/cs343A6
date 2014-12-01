@@ -1,8 +1,9 @@
 #include "nameserver.h"
 #include "watcard.h"
 #include "vending.h"
+#include "printer.h"
 
-void Vending::main() {
+void VendingMachine::main() {
     prt.print( Printer::Vending, ( char ) STARTING, sodaCost );
 
     for ( ;; ) {
@@ -13,19 +14,19 @@ void Vending::main() {
         /*
          * Perform input validation, and set exception flag according to result
          */
-        if ( watcardUsed.getBalance() < sodaCost ) {
+        if ( watcardUsed->getBalance() < sodaCost ) {
             exceptionFlag = 'f';               // A value of 'f' implies that Funds should be thrown by the task
         }
         else if ( flavourStock[ flavourToBuy ] == 0 ) {
             exceptionFlag = 's';               // A value of 's' implies that Stock should be thrown by the task
         } else {
             exceptionFlag = 0;                 // No exception, handle purchase
-            watcardUsed.withdraw( sodaCost );  // process payment
+            watcardUsed->withdraw( sodaCost );  // process payment
             flavourStock[ flavourToBuy ] -= 1; // decrement stock
         }
 
         // Print purchase message
-        prt.print( Printer::Vending, ( char ) BUY, ( int ) flavourToBuy, flavourCount[ flavourToBuy ] );
+        prt.print( Printer::Vending, ( char ) BUY, ( int ) flavourToBuy, flavourStock[ flavourToBuy ] );
 
         purchaseCompleteLock.V();
     }
@@ -36,14 +37,15 @@ void Vending::main() {
 
 VendingMachine::VendingMachine( Printer &prt, NameServer &nameServer, unsigned int id,
                                 unsigned int sodaCost, unsigned int maxStockPerFlavour ) :
-                                id(id), sodaCost(sodaCost), maxStockPerFlavour(maxStockPerFlavour),
+                                prt(prt), id(id), sodaCost(sodaCost), maxStockPerFlavour(maxStockPerFlavour),
+                                watcardUsed(NULL),
                                 buyLock(0), truckLock(0), studentMutexLock(1), purchaseCompleteLock(0) {
     // Register with name server
-    nameServer.VMRegister( this );
+    nameServer.VMregister( this );
 
     // machine is initially empty
-    for ( unsigned int i = 0; i < Flavours.FLAVOUR_COUNT; ++i ) {
-        flavourCount[ i ] = 0;
+    for ( unsigned int i = 0; i < NUM_FLAVOURS; ++i ) {
+        flavourStock[ i ] = 0;
     }
 
     exceptionFlag = 0; // no exception should be raised by default
@@ -55,7 +57,7 @@ void VendingMachine::buy( Flavours flavour, WATCard &card ) {
     studentMutexLock.P();
 
     flavourToBuy = flavour;
-    watcardUsed = card;
+    watcardUsed = &card;
 
     buyLock.V();                // perform purchase in main()
     purchaseCompleteLock.P();   // wait until purchase completes
@@ -69,18 +71,18 @@ void VendingMachine::buy( Flavours flavour, WATCard &card ) {
     }
 }
 
-unsigned int *inventory() {
+unsigned int *VendingMachine::inventory() {
     prt.print( Printer::Vending, ( char ) RELOADSTART, sodaCost );
 
     truckLock.P();        // do not process "buys" while restocking
 
-    return &flavourCount; // return direct pointer to array of inventory
+    return flavourStock; // return direct pointer to array of inventory
 }
 
 /*
  * Signal the vending machine that restocking is complete
  */
-void restocked() {
+void VendingMachine::restocked() {
     truckLock.V(); // release the restocking lock
     prt.print( Printer::Vending, ( char ) RELOADSTOP, sodaCost );
 }

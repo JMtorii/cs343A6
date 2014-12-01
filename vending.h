@@ -1,3 +1,5 @@
+#include "config.h"
+
 #include <uSemaphore.h>
 
 #ifndef __VENDING_H__
@@ -9,7 +11,7 @@ class WATCard;
 
 _Task VendingMachine {
   public:
-    enum Flavours { CHERRY, CREAM, ROOT, LIME, FLAVOUR_COUNT };
+    enum Flavours { CHERRY, CREAM, ROOT, LIME };
     _Event Funds {};                       // insufficient funds
     _Event Stock {};                       // out of stock for particular flavour
     VendingMachine( Printer &prt, NameServer &nameServer, unsigned int id, unsigned int sodaCost,
@@ -21,11 +23,12 @@ _Task VendingMachine {
     _Nomutex unsigned int getId();
   private:
     enum State { STARTING = 'S', RELOADSTART = 'r', RELOADSTOP = 'R', BUY = 'B', FINISHED = 'F' };
+    Printer& prt;
     char exceptionFlag; // 0 = no exception, 'f' = Funds, 's' = Stock
     unsigned int id, sodaCost, maxStockPerFlavour;
-    unsigned int flavourStock[ FLAVOUR_COUNT ];
+    unsigned int flavourStock[ NUM_FLAVOURS ];
     Flavours flavourToBuy;
-    WATCard& watcardUsed;
+    WATCard* watcardUsed;
     uSemaphore buyLock, truckLock, studentMutexLock, purchaseCompleteLock;
     void main();
 };

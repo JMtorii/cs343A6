@@ -1,4 +1,9 @@
+#include "config.h"
+#include "printer.h"
+#include "nameserver.h"
+#include "MPRNG.h"
 #include "bottle.h"
+#include "truck.h"
 
 BottlingPlant::BottlingPlant( Printer &prt, NameServer &nameServer, unsigned int numVendingMachines,
                  unsigned int maxShippedPerFlavour, unsigned int maxStockPerFlavour,
@@ -16,9 +21,9 @@ BottlingPlant::~BottlingPlant() {
 }
 
 void BottlingPlant::getShipment( unsigned int cargo[] ) {
-    if ( isDone ) _Throw( new Shutdown );
+    if ( isDone ) _Throw( Shutdown() );
 
-    prt.print( Printer::BottlingPlant ( char ) SHIPMENT_PICKED_UP );
+    prt.print( Printer::BottlingPlant, ( char ) SHIPMENT_PICKED_UP );
     for ( int i = 0; i < NUM_FLAVOURS; i++ ) {
         cargo[ i ] = stocks[ i ];
         stocks[ i ] = 0;
@@ -39,7 +44,7 @@ void BottlingPlant::createStock() {
 
 void BottlingPlant::main() {
     prt.print( Printer::BottlingPlant, ( char ) STARTING );
-    createSotck();
+    createStock();
 
     for ( ;; ) {
         _Accept( ~BottlingPlant ) {

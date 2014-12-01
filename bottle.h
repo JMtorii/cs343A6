@@ -1,12 +1,7 @@
+#include "config.h"
+
 #ifndef __BOTTLING_PLANT_H__
 #define __BOTTLING_PLANT_H__
-
-#include "config.h"
-#include "printer.h"
-#include "nameserver.h"
-#include "truck.h"
-#include "MPRNG.h"
-
 
 _Task Truck;
 

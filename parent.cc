@@ -1,4 +1,5 @@
 #include "parent.h"
+#include "config.h"
 
 Parent::Parent( Printer &prt, Bank &bank, unsigned int numStudents, unsigned int parentalDelay ) :
     prt( prt ), bank( bank ), numStudents( numStudents ), parentalDelay( parentalDelay ) {
