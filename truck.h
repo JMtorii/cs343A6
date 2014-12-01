@@ -9,7 +9,7 @@ _Task Truck {
     bool truckEmpty();
     unsigned int tallyCargo();
     Printer &prt;
-    BottlingPlant plant;
+    BottlingPlant &plant;
     unsigned int numVendingMachines. maxStockPerFlavour;
     VendingMachine** vendingMachines;
     unsigned int cargo[ VendingMachine::FLAVOUR_COUNT ];

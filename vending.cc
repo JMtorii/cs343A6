@@ -3,27 +3,35 @@
 #include "vending.h"
 
 void Vending::main() {
+    prt.print( Printer::Vending, ( char ) STARTING, sodaCost );
+
     for ( ;; ) {
         truckLock.V(); // ensure "buy" operation is not interrupted by restocking
-        buyLock.P(); // wait until purchase before running
+        buyLock.P();   // wait until purchase before running
         truckLock.P();
 
         /*
          * Perform input validation, and set exception flag according to result
          */
         if ( watcardUsed.getBalance() < sodaCost ) {
-            exceptionFlag = 'f'; // A value of 'f' implies that Funds should be thrown by the task
+            exceptionFlag = 'f';               // A value of 'f' implies that Funds should be thrown by the task
         }
         else if ( flavourStock[ flavourToBuy ] == 0 ) {
-            exceptionFlag = 's'; // A value of 's' implies that Stock should be thrown by the task
+            exceptionFlag = 's';               // A value of 's' implies that Stock should be thrown by the task
         } else {
-            exceptionFlag = 0; // No exception, handle purchase
-            watcardUsed.withdraw( sodaCost ); // process payment
+            exceptionFlag = 0;                 // No exception, handle purchase
+            watcardUsed.withdraw( sodaCost );  // process payment
             flavourStock[ flavourToBuy ] -= 1; // decrement stock
         }
 
+        // Print purchase message
+        prt.print( Printer::Vending, ( char ) BUY, ( int ) flavourToBuy, flavourCount[ flavourToBuy ] );
+
         purchaseCompleteLock.V();
     }
+
+    // TODO: Ensure that main gets terminated gracefully, so this gets printed?
+    prt.print( Printer::Vending, ( char ) FINISHED, sodaCost );
 }
 
 VendingMachine::VendingMachine( Printer &prt, NameServer &nameServer, unsigned int id,
@@ -48,10 +56,9 @@ void VendingMachine::buy( Flavours flavour, WATCard &card ) {
     flavourToBuy = flavour;
     watcardUsed = card;
 
-    buyLock.V(); // perform purchase in main()
-    purchaseCompleteLock.P(); // wait until purchase completes
-
-    studentMutexLock.V(); // allow other buys to proceed
+    buyLock.V();                // perform purchase in main()
+    purchaseCompleteLock.P();   // wait until purchase completes
+    studentMutexLock.V();       // allow other buys to proceed
 
     // Handle any exceptions which may have been triggered
     if ( exceptionFlag == 'f' ) {
@@ -62,7 +69,9 @@ void VendingMachine::buy( Flavours flavour, WATCard &card ) {
 }
 
 unsigned int *inventory() {
-    truckLock.P(); // do not process "buys" while restocking
+    prt.print( Printer::Vending, ( char ) RELOADSTART, sodaCost );
+
+    truckLock.P();        // do not process "buys" while restocking
 
     return &flavourCount; // return direct pointer to array of inventory
 }
@@ -72,6 +81,7 @@ unsigned int *inventory() {
  */
 void restocked() {
     truckLock.V(); // release the restocking lock
+    prt.print( Printer::Vending, ( char ) RELOADSTOP, sodaCost );
 }
 
 

@@ -20,10 +20,11 @@ _Task VendingMachine {
     _Nomutex unsigned int cost();
     _Nomutex unsigned int getId();
   private:
+    enum State { STARTING = 'S', RELOADSTART = 'r', RELOADSTOP = 'R', BUY = 'B', FINISHED = 'F' };
     char exceptionFlag; // 0 = no exception, 'f' = Funds, 's' = Stock
     unsigned int id, sodaCost, maxStockPerFlavour;
     unsigned int flavourStock[ FLAVOUR_COUNT ];
-    Flavour flavourToBuy;
+    Flavours flavourToBuy;
     WATCard& watcardUsed;
     uSemaphore buyLock(0), truckLock(0), studentMutexLock(1), purchaseCompleteLock(0);
     void main();
