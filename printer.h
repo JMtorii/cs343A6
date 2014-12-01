@@ -1,7 +1,7 @@
 #ifndef __PRINTER_H__
 #define __PRINTER_H__
 
-const unsigned int SINGLE_KIND_TOTAL = 5;
+#include "config.h"
 
 struct Data {
     unsigned int id;

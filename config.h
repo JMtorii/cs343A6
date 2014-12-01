@@ -6,6 +6,8 @@
 #define CHANCE_TO_LOSE_CARD 6 
 #define MIN_PARENT_MONEY 1
 #define MAX_PARENT_MONEY 3
+#define SINGLE_KIND_TOTAL 5
+
 
 struct ConfigParms {
     unsigned int sodaCost;                  // MSRP per bottle

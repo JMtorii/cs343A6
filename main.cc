@@ -42,7 +42,6 @@ void uMain::main() {
 
     ConfigParms params; 
     processConfigFile( configFile.c_str(), params );
-    
     Printer printer( params.numStudents, params.numVendingMachines, params.numCouriers );
     Bank bank( params.numStudents );
     Parent *parent = new Parent( printer, bank, params.numStudents, params.parentalDelay );

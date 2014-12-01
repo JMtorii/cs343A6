@@ -4,7 +4,8 @@ using namespace std;
 
 Printer::Printer( unsigned int numStudents, unsigned int numVendingMachines, unsigned int numCouriers) : 
     numStudents( numStudents ), numVendingMachines( numVendingMachines ), numCouriers( numCouriers ) {
-    printData = new Data[ SINGLE_KIND_TOTAL + numStudents + numVendingMachines + numCouriers ];
+    totalSize = SINGLE_KIND_TOTAL + numStudents + numVendingMachines + numCouriers; 
+    printData = new Data[ totalSize ];
     
     cout << "Parent\tWATOff\tNames\tTruck\tPlant\t";
     for( unsigned int i = 0; i < numStudents; i++ ) cout << "Stud" << i << '\t';
@@ -21,11 +22,11 @@ Printer::~Printer() {
 }
 
 void Printer::print( Kind kind, char state ) {
-    print( kind, 0, state, -1, -1 );
+    print( kind, state, -1, -1 );
 }
 
 void Printer::print( Kind kind, char state, int value1 ) {
-    print( kind, 0, state, value1, -1 );
+    print( kind, state, value1, -1 );
 }
 
 void Printer::print( Kind kind, char state, int value1, int value2) {
