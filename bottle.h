@@ -1,13 +1,34 @@
-_Monitor Printer;
-_Task NameServer;
+#ifndef __BOTTLING_PLANT_H__
+#define __BOTTLING_PLANT_H__
+
+#include "config.h"
+#include "printer.h"
+#include "nameserver.h"
+#include "truck.h"
+#include "MPRNG.h"
+
+
+_Task Truck;
 
 _Task BottlingPlant {
-    void main();
   public:
     _Event Shutdown {};                    // shutdown plant
     BottlingPlant( Printer &prt, NameServer &nameServer, unsigned int numVendingMachines,
                  unsigned int maxShippedPerFlavour, unsigned int maxStockPerFlavour,
                  unsigned int timeBetweenShipments );
+    ~BottlingPlant();
     void getShipment( unsigned int cargo[] );
+  private:
+    enum State { STARTING = 'S', GENERATING_SODA = 'G', SHIPMENT_PICKED_UP = 'P', FINISHED = 'F' };
+    Printer &prt;
+    NameServer &nameServer;
+    unsigned int numVendingMachines, maxShippedPerFlavour, maxStockPerFlavour, timeBetweenShipments;
+    unsigned int stocks[ NUM_FLAVOURS ];
+    int numRegVendingMachines;
+    bool isDone;    // is this necessary
+    Truck *truck;
+    void createStock();
+    void main();
 };
 
+#endif
