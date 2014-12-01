@@ -10,7 +10,7 @@ _Task Truck {
     unsigned int tallyCargo();
     Printer &prt;
     BottlingPlant &plant;
-    unsigned int numVendingMachines. maxStockPerFlavour;
+    unsigned int numVendingMachines, maxStockPerFlavour;
     VendingMachine** vendingMachines;
     unsigned int cargo[ VendingMachine::FLAVOUR_COUNT ];
     enum State { STARTING = 'S', PICKUP = 'P', DELIVERYSTART = 'd', UNSUCCESS = 'U', DELIVERYSTOP = 'D', FINISHED = 'F' };

@@ -36,7 +36,8 @@ void Vending::main() {
 
 VendingMachine::VendingMachine( Printer &prt, NameServer &nameServer, unsigned int id,
                                 unsigned int sodaCost, unsigned int maxStockPerFlavour ) :
-                                id(id), sodaCost(sodaCost), maxStockPerFlavour(maxStockPerFlavour) {
+                                id(id), sodaCost(sodaCost), maxStockPerFlavour(maxStockPerFlavour),
+                                buyLock(0), truckLock(0), studentMutexLock(1), purchaseCompleteLock(0) {
     // Register with name server
     nameServer.VMRegister( this );
 

@@ -26,7 +26,7 @@ _Task VendingMachine {
     unsigned int flavourStock[ FLAVOUR_COUNT ];
     Flavours flavourToBuy;
     WATCard& watcardUsed;
-    uSemaphore buyLock(0), truckLock(0), studentMutexLock(1), purchaseCompleteLock(0);
+    uSemaphore buyLock, truckLock, studentMutexLock, purchaseCompleteLock;
     void main();
 };
 
