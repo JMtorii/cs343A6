@@ -9,7 +9,7 @@ void Parent::main() {
     for ( ;; ) {
         _Accept( ~Parent ) {
             break;
-        } else {
+        } _Else {
             yield( parentalDelay );
             int student = randomizer( numStudents - 1 );
             int amount = randomizer( MIN_PARENT_MONEY, MAX_PARENT_MONEY );
