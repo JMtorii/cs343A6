@@ -1,5 +1,4 @@
 #include "office.h"
-
 WATCardOffice::WATCardOffice( Printer &prt, Bank &bank, unsigned int numCouriers ) : 
     prt( prt ), bank( bank), numCouriers( numCouriers ) {
     job = NULL;
