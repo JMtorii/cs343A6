@@ -9,6 +9,8 @@ void VendingMachine::main() {
     // Register with name server
     nameServer.VMregister( this );
 
+    // Paltry main method for controlling function calls
+    // Should add more code in here for maximum concurrency
     for ( ;; ) {
         _Accept( ~VendingMachine ) {
             break;
@@ -35,13 +37,14 @@ VendingMachine::VendingMachine( Printer &prt, NameServer &nameServer, unsigned i
 
 void VendingMachine::buy( Flavours flavour, WATCard &card ) {
 
+    // Check if there is sufficient stock, and that card has sufficient balance
     if ( flavourStock[ flavour ] == 0 ) {
         uRendezvousAcceptor();
-        _Throw Stock();
+        _Throw Stock(); // throw stock exception if insufficient stock
     }
     else if ( sodaCost > card.getBalance() ) {
         uRendezvousAcceptor();
-        _Throw Funds();
+        _Throw Funds(); // throw funds exception if insufficient funds
     }
     
     prt.print( Printer::Vending, id, ( char ) BUY, flavour, --flavourStock[ flavour ]) ;
