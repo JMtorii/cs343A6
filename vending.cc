@@ -4,20 +4,25 @@
 #include "printer.h"
 
 void VendingMachine::main() {
+    prt.print( Printer::Vending, ( char ) STARTING, sodaCost );
+    
     // Register with name server
     nameServer.VMregister( this );
 
-    prt.print( Printer::Vending, ( char ) STARTING, sodaCost );
-
     for ( ;; ) {
-        truckLock.V(); // ensure "buy" operation is not interrupted by restocking
-        buyLock.P();   // wait until purchase before running
-        truckLock.P();
+        while ( 1 ) { }
+        _Accept( ~VendingMachine ) {
+            break;
+        } or _When( !isRestocking ) _Accept( buy, inventory ) {
+            prt.print( Printer::Vending, id, ( char ) RELOADSTART );
+        } or _When ( isRestocking ) _Accept( restocked ) {
+            prt.print( Printer::Vending, id, ( char ) RELOADSTOP );
+        } 
 
         /*
          * Perform input validation, and set exception flag according to result
          */
-        if ( watcardUsed->getBalance() < sodaCost ) {
+    /*    if ( watcardUsed->getBalance() < sodaCost ) {
             exceptionFlag = 'f';               // A value of 'f' implies that Funds should be thrown by the task
         }
         else if ( flavourStock[ flavourToBuy ] == 0 ) {
@@ -27,11 +32,10 @@ void VendingMachine::main() {
             watcardUsed->withdraw( sodaCost );  // process payment
             flavourStock[ flavourToBuy ] -= 1; // decrement stock
         }
-
+*/
         // Print purchase message
         prt.print( Printer::Vending, ( char ) BUY, ( int ) flavourToBuy, flavourStock[ flavourToBuy ] );
 
-        purchaseCompleteLock.V();
     }
 
     // TODO: Ensure that main gets terminated gracefully, so this gets printed?
@@ -54,7 +58,7 @@ VendingMachine::VendingMachine( Printer &prt, NameServer &nameServer, unsigned i
 void VendingMachine::buy( Flavours flavour, WATCard &card ) {
 
     // Do not proceed if there are other students purchasing
-    studentMutexLock.P();
+    /*studentMutexLock.P();
 
     flavourToBuy = flavour;
     watcardUsed = &card;
@@ -68,23 +72,30 @@ void VendingMachine::buy( Flavours flavour, WATCard &card ) {
         _Throw Funds();
     } else if ( exceptionFlag == 's' ) {
         _Throw Stock();
-    }
+    }*/
+    if ( flavourStock[ flavour ] == 0 ) _Throw Stock();
+    else if ( sodaCost > card.getBalance() ) _Throw Funds();
+    
+    prt.print( Printer::Vending, id, ( char ) BUY, flavour, --flavourStock[ flavour ]) ;
+    card.withdraw( sodaCost );
 }
 
-unsigned int *VendingMachine::inventory() {
+unsigned int *VendingMachine::inventory() {/*
     prt.print( Printer::Vending, ( char ) RELOADSTART, sodaCost );
 
     truckLock.P();        // do not process "buys" while restocking
-
+*/
+    isRestocking = true;
     return flavourStock; // return direct pointer to array of inventory
 }
 
 /*
  * Signal the vending machine that restocking is complete
  */
-void VendingMachine::restocked() {
+void VendingMachine::restocked() {/*
     truckLock.V(); // release the restocking lock
-    prt.print( Printer::Vending, ( char ) RELOADSTOP, sodaCost );
+    prt.print( Printer::Vending, ( char ) RELOADSTOP, sodaCost ); */
+    isRestocking = false;
 }
 
 
