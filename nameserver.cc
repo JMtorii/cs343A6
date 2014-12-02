@@ -1,7 +1,6 @@
 #include "nameserver.h"
 #include "vending.h"
 #include "printer.h"
-
 #include <iostream>
 
 NameServer::NameServer( Printer &prt, unsigned int numVendingMachines, unsigned int numStudents ) : 

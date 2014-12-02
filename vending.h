@@ -24,6 +24,7 @@ _Task VendingMachine {
   private:
     enum State { STARTING = 'S', RELOADSTART = 'r', RELOADSTOP = 'R', BUY = 'B', FINISHED = 'F' };
     Printer& prt;
+    NameServer& nameServer;
     char exceptionFlag; // 0 = no exception, 'f' = Funds, 's' = Stock
     unsigned int id, sodaCost, maxStockPerFlavour;
     unsigned int flavourStock[ NUM_FLAVOURS ];

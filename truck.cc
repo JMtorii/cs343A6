@@ -32,6 +32,9 @@ unsigned int Truck::tallyCargo() {
 }
 
 void Truck::main() {
+    // Obtain the location of each vending machine from the name server
+    vendingMachines = nameServer.getMachineList();
+
     prt.print( Printer::Truck, ( char ) STARTING );
 
     unsigned int currentMachine = 0;
@@ -97,12 +100,8 @@ void Truck::main() {
 
 Truck::Truck( Printer &prt, NameServer &nameServer, BottlingPlant &plant,
               unsigned int numVendingMachines, unsigned int maxStockPerFlavour ) :
-              prt(prt), plant(plant), numVendingMachines(numVendingMachines),
+              prt(prt), nameServer(nameServer), plant(plant), numVendingMachines(numVendingMachines),
               maxStockPerFlavour(maxStockPerFlavour) {
-
-    // Obtain the location of each vending machine from the name server
-    vendingMachines = nameServer.getMachineList();
-
     // Initialize cargo to empty
     for ( unsigned int i = 0; i < NUM_FLAVOURS; ++i ) {
         cargo[ i ] = 0;

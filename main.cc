@@ -48,8 +48,8 @@ void uMain::main() {
     WATCardOffice *watCardOffice = new WATCardOffice( printer, bank, params.numCouriers );
     NameServer *nameServer = new NameServer( printer, params.numVendingMachines, params.numStudents );
     BottlingPlant *bottlingPlant = new BottlingPlant( printer, *nameServer, params.numVendingMachines, params.maxShippedPerFlavour, params.maxStockPerFlavour, params.timeBetweenShipments );
-    
     VendingMachine *vendingMachines[ params.numVendingMachines ];
+
     for ( unsigned int i = 0; i < params.numVendingMachines; i++ )
         vendingMachines[ i ] = new VendingMachine( printer, *nameServer, i, params.sodaCost, params.maxStockPerFlavour);
 

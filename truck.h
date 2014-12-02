@@ -10,6 +10,7 @@ _Task Truck {
     bool truckEmpty();
     unsigned int tallyCargo();
     Printer &prt;
+    NameServer &nameServer;
     BottlingPlant &plant;
     unsigned int numVendingMachines, maxStockPerFlavour;
     VendingMachine** vendingMachines;

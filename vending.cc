@@ -4,6 +4,9 @@
 #include "printer.h"
 
 void VendingMachine::main() {
+    // Register with name server
+    nameServer.VMregister( this );
+
     prt.print( Printer::Vending, ( char ) STARTING, sodaCost );
 
     for ( ;; ) {
@@ -37,12 +40,9 @@ void VendingMachine::main() {
 
 VendingMachine::VendingMachine( Printer &prt, NameServer &nameServer, unsigned int id,
                                 unsigned int sodaCost, unsigned int maxStockPerFlavour ) :
-                                prt(prt), id(id), sodaCost(sodaCost), maxStockPerFlavour(maxStockPerFlavour),
-                                watcardUsed(NULL),
+                                prt(prt), nameServer(nameServer), id(id), sodaCost(sodaCost), 
+                                maxStockPerFlavour(maxStockPerFlavour), watcardUsed(NULL),
                                 buyLock(0), truckLock(0), studentMutexLock(1), purchaseCompleteLock(0) {
-    // Register with name server
-    nameServer.VMregister( this );
-
     // machine is initially empty
     for ( unsigned int i = 0; i < NUM_FLAVOURS; ++i ) {
         flavourStock[ i ] = 0;
