@@ -34,8 +34,15 @@ VendingMachine::VendingMachine( Printer &prt, NameServer &nameServer, unsigned i
 };
 
 void VendingMachine::buy( Flavours flavour, WATCard &card ) {
-    if ( flavourStock[ flavour ] == 0 ) _Throw Stock();
-    else if ( sodaCost > card.getBalance() ) _Throw Funds();
+
+    if ( flavourStock[ flavour ] == 0 ) {
+        uRendezvousAcceptor();
+        _Throw Stock();
+    }
+    else if ( sodaCost > card.getBalance() ) {
+        uRendezvousAcceptor();
+        _Throw Funds();
+    }
     
     prt.print( Printer::Vending, id, ( char ) BUY, flavour, --flavourStock[ flavour ]) ;
     card.withdraw( sodaCost );
