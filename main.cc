@@ -14,15 +14,20 @@ using namespace std;
 
 MPRNG randomizer;
 
+/*
+ * Helper function for incorrect usage
+ */
 void usage() {
     cerr << "Usage: soda [ config-file [ random-seed ] ]" << endl;
     exit( 1 );
 }
 
 void uMain::main() {
+    // get random seed
     int seed = getpid();
     string configFile = "soda.config";
 
+    // set up from argv
     switch ( argc ) {
       case 3:
         seed = atoi( argv[ 2 ] ); 
@@ -37,9 +42,11 @@ void uMain::main() {
         usage();
         break;
     }
-
+    
+    // randomize using given seed
     randomizer.seed( seed );
 
+    // set up all system objects
     ConfigParms params; 
     processConfigFile( configFile.c_str(), params );
     Printer printer( params.numStudents, params.numVendingMachines, params.numCouriers );
@@ -57,6 +64,7 @@ void uMain::main() {
     for ( unsigned int i = 0; i < params.numStudents; i++ )
         students[ i ] = new Student( printer, *nameServer, *watCardOffice, i, params.maxPurchases );
 
+    // destroy all created objects in opposite order
     for ( unsigned int i = 0; i < params.numStudents; i++ ) 
         delete students[ i ];
 
