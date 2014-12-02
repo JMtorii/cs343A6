@@ -2,7 +2,6 @@
 #include "watcard.h"
 #include "vending.h"
 #include "printer.h"
-#include <iostream>
 
 void VendingMachine::main() {
     prt.print( Printer::Vending, ( char ) STARTING, sodaCost );
@@ -14,14 +13,8 @@ void VendingMachine::main() {
         _Accept( ~VendingMachine ) {
             break;
         } or _When( !isRestocking ) _Accept( buy, inventory ) {
-            prt.print( Printer::Vending, id, ( char ) RELOADSTART );
         } or _When ( isRestocking ) _Accept( restocked ) {
-            prt.print( Printer::Vending, id, ( char ) RELOADSTOP );
         } 
-
-        // Print purchase message
-        prt.print( Printer::Vending, ( char ) BUY, ( int ) flavourToBuy, flavourStock[ flavourToBuy ] );
-
     }
 
     prt.print( Printer::Vending, ( char ) FINISHED, sodaCost );
@@ -48,22 +41,18 @@ void VendingMachine::buy( Flavours flavour, WATCard &card ) {
     card.withdraw( sodaCost );
 }
 
-unsigned int *VendingMachine::inventory() {/*
-    prt.print( Printer::Vending, ( char ) RELOADSTART, sodaCost );
-
-    truckLock.P();        // do not process "buys" while restocking
-*/
+unsigned int *VendingMachine::inventory() {
     isRestocking = true;
+    prt.print( Printer::Vending, id, ( char ) RELOADSTART );
     return flavourStock; // return direct pointer to array of inventory
 }
 
 /*
  * Signal the vending machine that restocking is complete
  */
-void VendingMachine::restocked() {/*
-    truckLock.V(); // release the restocking lock
-    prt.print( Printer::Vending, ( char ) RELOADSTOP, sodaCost ); */
+void VendingMachine::restocked() {
     isRestocking = false;
+    prt.print( Printer::Vending, id, ( char ) RELOADSTOP );
 }
 
 
